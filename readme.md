@@ -46,3 +46,7 @@ In order of priority:
 1. Check if there are still shifts unassigned AND entities that are not "Done".
     - If so, sort entities by number of compromises from most to least, and then loop through them again. This ensures that entities that have compromised the most get first pick each round.
 1. Output the schedule to output.csv.
+
+Required data structures:
+- List of shifts with date, day, and assigned entity
+- List of entities with name, group, days unavailable, number of compromises, and done marker
