@@ -24,7 +24,7 @@ The program will output an output.csv file with the following columns:
 
 Note that the schedule may have gaps where it was not possible to place any entity.
 
-## Basic Plan
+## Implementation Plan
 This program does not ensure that all constraints are perfectly met, as that would require the inputs to be completely non-contradictory. Instead, it prioritizes the provided types of constraints and attempts to minimize and evenly distribute violations of those constraints across the scheduled entities.
 
 ### Constraints
