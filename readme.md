@@ -31,7 +31,7 @@ This program does not ensure that all constraints are perfectly met, as that wou
 In order of priority:
 1. Days Unavailable - An entity should never be scheduled for a day that it is not available.
 1. Shift distribution - Make sure that all entities have roughly equal numbers of shifts over the entire period.
-1. Minimum number of weeks between shifts - Attempt to respect the minimum amount of time between shifts.
+1. Minimum number of days between shifts - Attempt to respect the minimum amount of time between shifts.
 1. Group membership - Attempt to diversify the groups of the entities that are scheduled for a given week.
 1. Day distribution - Try to ensure that each entity has shifts across a variety of the days they are available.
 
