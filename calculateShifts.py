@@ -22,6 +22,8 @@ class Entity:
         self.countPerDay[day] += 1
     def toString(self):
         return "{0},{1},{2}".format(self.group, self.name, self.daysUnavailable)
+    def toStringDebug(self):
+        return "{0}, Compromises: {1}, Count Per Day: {2}".format(self.name, self.numCompromises, self.countPerDay)
 
 class Shift:
     def __init__(self, date, day):
@@ -71,47 +73,65 @@ numEntities = len(arrEntities)
 shiftsPerEntity = ceil(numShifts / numEntities)
 daysPerShift = ceil(numDays / shiftsPerEntity)
 
-for entity in arrEntities:
-    if not entity.done:
-        shiftCandidates = []
+entitiesRemaining = True
+shiftsRemaining = True
+while entitiesRemaining and shiftsRemaining:
+    entitiesRemaining = False
+    shiftsRemaining = False
+    for shift in arrShifts:
+        if shift.assigned == None:
+            shiftsRemaining = True
 
-        # Look for the next ideal shift
-        def availableShift(shift):
-            return shift.day not in entity.daysUnavailable and shift.assigned == None
+    if not shiftsRemaining:
+        continue
 
-        shiftCandidatesC = list(filter(availableShift, arrShifts))
-        if len(shiftCandidatesC) == 0:
-            entity.done = True
-            continue
+    for entity in arrEntities:
+        if not entity.done:
+            entitiesRemaining = True
+            shiftCandidates = []
 
-        def lateEnoughShift(shift):
-            return entity.lastShift == None or shift.date - entity.lastShift > numDaysBetweenShifts
+            # Look for the next ideal shift
+            def availableShift(shift):
+                return shift.day not in entity.daysUnavailable and shift.assigned == None
 
-        shiftCandidatesB = list(filter(lateEnoughShift, shiftCandidatesC))
-        if len(shiftCandidatesB) == 0:
-            # if there's no candidates in B, use C
-            shiftCandidates = shiftCandidatesC
-        else:
-            def soonEnoughShift(shift):
-                comparisonDate = dateStart
-                if not entity.lastShift == None:
-                    comparisonDate = entity.lastShift
+            shiftCandidatesC = list(filter(availableShift, arrShifts))
+            if len(shiftCandidatesC) == 0:
+                entity.done = True
+                continue
 
-                return shift.date - comparisonDate < timedelta(daysPerShift + 2)
+            def lateEnoughShift(shift):
+                return entity.lastShift == None or shift.date - entity.lastShift > numDaysBetweenShifts
 
-            shiftCandidatesA = list(filter(soonEnoughShift, shiftCandidatesB))
-            if len(shiftCandidatesA) == 0:
-                # if there's no candidates in A, use B
-                shiftCandidates = shiftCandidatesB
+            shiftCandidatesB = list(filter(lateEnoughShift, shiftCandidatesC))
+            if len(shiftCandidatesB) == 0:
+                # if there's no candidates in B, use C
+                shiftCandidates = shiftCandidatesC
+                entity.numCompromises += 2
             else:
-                shiftCandidates = shiftCandidatesA
+                def soonEnoughShift(shift):
+                    comparisonDate = dateStart
+                    if not entity.lastShift == None:
+                        comparisonDate = entity.lastShift
 
-        
-        def balanceExistingDays(shift):
-            return entity.countPerDay[shift.day]
-        
-        shiftCandidates.sort(key=balanceExistingDays)
-        shiftCandidates[0].assign(entity)
+                    return shift.date - comparisonDate < timedelta(daysPerShift + 2)
+
+                shiftCandidatesA = list(filter(soonEnoughShift, shiftCandidatesB))
+                if len(shiftCandidatesA) == 0:
+                    # if there's no candidates in A, use B
+                    shiftCandidates = shiftCandidatesB
+                    entity.numCompromises += 1
+                else:
+                    shiftCandidates = shiftCandidatesA
+
+            
+            def balanceExistingDays(shift):
+                return entity.countPerDay[shift.day]
+            
+            shiftCandidates.sort(key=balanceExistingDays)
+            shiftCandidates[0].assign(entity)
 
 for shift in arrShifts:
     print(shift.toString())
+
+for entity in arrEntities:
+    print(entity.toStringDebug())
