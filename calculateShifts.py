@@ -106,25 +106,25 @@ while entitiesRemaining and shiftsRemaining:
                 entity.done = True
                 continue
 
-            # What shifts are far enough from the last shift this entity had?
-            def lateEnoughShift(shift):
-                return entity.lastShift == None or shift.date - entity.lastShift > numDaysBetweenShifts
+            # What shifts are soon enough to make sure that the shift counts are roughly equal overall?
+            def soonEnoughShift(shift):
+                comparisonDate = dateStart
+                if not entity.lastShift == None:
+                    comparisonDate = entity.lastShift
 
-            shiftCandidatesB = list(filter(lateEnoughShift, shiftCandidatesC))
+                return shift.date - comparisonDate < timeWindow
+
+            shiftCandidatesB = list(filter(soonEnoughShift, shiftCandidatesC))
             if len(shiftCandidatesB) == 0:
                 # if there's no candidates in B, use C
                 shiftCandidates = shiftCandidatesC
                 entity.numCompromises += 2
             else:
-                # What shifts are soon enough to make sure that the shift counts are roughly equal overall?
-                def soonEnoughShift(shift):
-                    comparisonDate = dateStart
-                    if not entity.lastShift == None:
-                        comparisonDate = entity.lastShift
+                # What shifts are far enough from the last shift this entity had?
+                def lateEnoughShift(shift):
+                    return entity.lastShift == None or shift.date - entity.lastShift > numDaysBetweenShifts
 
-                    return shift.date - comparisonDate < timeWindow
-
-                shiftCandidatesA = list(filter(soonEnoughShift, shiftCandidatesB))
+                shiftCandidatesA = list(filter(lateEnoughShift, shiftCandidatesB))
                 if len(shiftCandidatesA) == 0:
                     # if there's no candidates in A, use B
                     shiftCandidates = shiftCandidatesB
