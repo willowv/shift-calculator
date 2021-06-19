@@ -130,8 +130,6 @@ while entitiesRemaining and shiftsRemaining:
             shiftCandidates.sort(key=balanceExistingDays)
             shiftCandidates[0].assign(entity)
 
-for shift in arrShifts:
-    print(shift.toString())
-
-for entity in arrEntities:
-    print(entity.toStringDebug())
+with open('output.csv', 'w') as outputFile:
+    for shift in arrShifts:
+        outputFile.write(shift.toString()+'\n')
