@@ -12,7 +12,7 @@ The following arguments are required:
 ### Entities File Requirements
 The Entities file should be a comma-separated values (CSV) file with the following columns:
 - Name
-- Group - the program will attempt to avoid using members of just one group in a given week.
+- Group - not currently used by the program
 - Days Unavailable - specify which days of the week this entity is unavailable.
 
 ## Output
@@ -32,12 +32,10 @@ In order of priority:
 1. Days Unavailable - An entity should never be scheduled for a day that it is not available.
 1. Shift distribution - Make sure that all entities have roughly equal numbers of shifts over the entire period.
 1. Minimum number of days between shifts - Attempt to respect the minimum amount of time between shifts.
-1. Group membership - Attempt to diversify the groups of the entities that are scheduled for a given week.
 1. Day distribution - Try to ensure that each entity has shifts across a variety of the days they are available.
 
 ### Pseudocode
 1. Generate the list of all shifts.
-1. Sort the entities in order of number of constraints.
 1. For each entity that is not "Done":
    1. Look for next ideal shift.
    1. If it's unoccupied, take it.
