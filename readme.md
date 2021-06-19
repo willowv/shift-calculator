@@ -2,6 +2,10 @@
 Given a set of entities with constraints, calculate a schedule of shifts for them that maximally respects those constraints.
 
 ## Usage
+Ensure that your computer has Python installed by running `python --version` on the command line.
+
+Download the calculateShifts.py file.
+
 The following arguments are required:
 - Entities filename (e.g. foo.csv)
 - Start date (YYYY-MM-DD)
@@ -9,11 +13,18 @@ The following arguments are required:
 - Days with shifts (e.g. fri,sat,sun)
 - Minimum number of days between shifts
 
+For example:
+```
+python calculateShifts.py boats.csv 2021-08-01 10 fri,sat,sun 6
+```
+
 ### Entities File Requirements
 The Entities file should be a comma-separated values (CSV) file with the following columns:
 - Name
 - Group - not currently used by the program
 - Days Unavailable - specify which days of the week this entity is unavailable.
+
+See sampleEntities.csv for an example!
 
 ## Output
 The program will output an output.csv file with the following columns:
