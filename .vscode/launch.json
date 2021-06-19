@@ -10,7 +10,7 @@
             "request": "launch",
             "program": "calculateShifts.py",
             "console": "integratedTerminal",
-            "args": ["sampleEntities.csv","2021-06-18","10","fri,sat,sun","6"]
+            "args": ["sampleEntities.csv","2021-06-18","10","fri;sat;sun","6"]
         }
     ]
 }

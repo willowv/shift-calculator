@@ -48,7 +48,7 @@ if len(sys.argv) != 6:
 entitiesFile = sys.argv[1]
 dateStart = date.fromisoformat(sys.argv[2])
 numWeeks = int(sys.argv[3])
-days = sys.argv[4].split(',')
+days = sys.argv[4].split(';')
 numDaysBetweenShifts = timedelta(int(sys.argv[5]))
 
 # Populate data structures
@@ -68,15 +68,18 @@ for i in range(numDays):
         shift = Shift(shiftDate, shiftDay)
         arrShifts.append(shift)
 
+# Calculate time window for shift searches
 numShifts = len(arrShifts)
 numEntities = len(arrEntities)
 shiftsPerEntity = ceil(numShifts / numEntities)
 daysPerShift = ceil(numDays / shiftsPerEntity)
+timeWindow = timedelta(daysPerShift + 2)
 
+# Assign shifts
 entitiesRemaining = True
 shiftsRemaining = True
 while entitiesRemaining and shiftsRemaining:
-    entitiesRemaining = False
+    # Determine if there are shifts remaining. Check this first because if there aren't, we're done!
     shiftsRemaining = False
     for shift in arrShifts:
         if shift.assigned == None:
@@ -85,12 +88,16 @@ while entitiesRemaining and shiftsRemaining:
     if not shiftsRemaining:
         continue
 
+    # Assume that we're out of entities until we encounter one that isn't done
+    entitiesRemaining = False
     for entity in arrEntities:
         if not entity.done:
             entitiesRemaining = True
-            shiftCandidates = []
 
             # Look for the next ideal shift
+            shiftCandidates = []
+
+            # What shifts could this entity be available for?
             def availableShift(shift):
                 return shift.day not in entity.daysUnavailable and shift.assigned == None
 
@@ -99,6 +106,7 @@ while entitiesRemaining and shiftsRemaining:
                 entity.done = True
                 continue
 
+            # What shifts are far enough from the last shift this entity had?
             def lateEnoughShift(shift):
                 return entity.lastShift == None or shift.date - entity.lastShift > numDaysBetweenShifts
 
@@ -108,12 +116,13 @@ while entitiesRemaining and shiftsRemaining:
                 shiftCandidates = shiftCandidatesC
                 entity.numCompromises += 2
             else:
+                # What shifts are soon enough to make sure that the shift counts are roughly equal overall?
                 def soonEnoughShift(shift):
                     comparisonDate = dateStart
                     if not entity.lastShift == None:
                         comparisonDate = entity.lastShift
 
-                    return shift.date - comparisonDate < timedelta(daysPerShift + 2)
+                    return shift.date - comparisonDate < timeWindow
 
                 shiftCandidatesA = list(filter(soonEnoughShift, shiftCandidatesB))
                 if len(shiftCandidatesA) == 0:
@@ -123,13 +132,16 @@ while entitiesRemaining and shiftsRemaining:
                 else:
                     shiftCandidates = shiftCandidatesA
 
-            
+            # Sort the candidates to evenly distribute day options if possible
             def balanceExistingDays(shift):
                 return entity.countPerDay[shift.day]
             
             shiftCandidates.sort(key=balanceExistingDays)
+
+            # Assign the chosen shift!
             shiftCandidates[0].assign(entity)
 
+# Write the schedule
 with open('output.csv', 'w') as outputFile:
     for shift in arrShifts:
         outputFile.write(shift.toString()+'\n')

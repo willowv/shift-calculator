@@ -4,25 +4,27 @@ Given a set of entities with constraints, calculate a schedule of shifts for the
 ## Usage
 Ensure that your computer has Python installed by running `python --version` on the command line.
 
-Download the calculateShifts.py file.
+If it does not, you can download Python here: https://www.python.org/downloads
 
-The following arguments are required:
-- Entities filename (e.g. foo.csv)
+Download the calculateShifts.py file from this repository.
+
+This program is run from the command line. It takes an input file and records the generated schedule in an output file. The following arguments are required:
+- Entities filename (e.g. foo.csv) - this is your input file, see the requirements below for what it should look like.
 - Start date (YYYY-MM-DD)
 - Number of weeks
-- Days with shifts (e.g. fri,sat,sun)
+- Days with shifts, using lowercase, shortened day names separated with semi-colons (e.g. fri;sat;sun)
 - Minimum number of days between shifts
 
 For example:
 ```
-python calculateShifts.py boats.csv 2021-08-01 10 fri,sat,sun 6
+python calculateShifts.py boats.csv 2021-08-01 10 fri;sat;sun 6
 ```
 
 ### Entities File Requirements
 The Entities file should be a comma-separated values (CSV) file with the following columns:
 - Name
-- Group - not currently used by the program
-- Days Unavailable - specify which days of the week this entity is unavailable.
+- Group - not currently used by the program, but will be included in the output in case you want to see how different groups are distributed in the schedule.
+- Days Unavailable - specify which days of the week this entity is unavailable using lowercase, shortened day names separated with semi-colons (e.g. fri;sat;sun).
 
 See sampleEntities.csv for an example!
 
@@ -33,12 +35,14 @@ The program will output an output.csv file with the following columns:
 - Group
 - Name
 
-Note that the schedule may have gaps where it was not possible to place any entity.
+The schedule will attempt to minimize constraint violations but since these constraints can come into conflict the schedule will not be perfect. We recommend allowing substitutions if you use this schedule directly.
 
 ## Implementation Plan
-This program does not ensure that all constraints are perfectly met, as that would require the inputs to be completely non-contradictory. Instead, it prioritizes the provided types of constraints and attempts to minimize and evenly distribute violations of those constraints across the scheduled entities.
+Below are some details about how the program works, if you are interested.
 
 ### Constraints
+This program does not ensure that all constraints are perfectly met, as that would require the inputs to be completely non-contradictory. Instead, it prioritizes the provided types of constraints and attempts to minimize and evenly distribute violations of those constraints across the scheduled entities.
+
 In order of priority:
 1. Days Unavailable - An entity should never be scheduled for a day that it is not available.
 1. Shift distribution - Make sure that all entities have roughly equal numbers of shifts over the entire period.
@@ -47,6 +51,7 @@ In order of priority:
 
 ### Pseudocode
 1. Generate the list of all shifts.
+1. Initially sort entities from most to least day restrictions.
 1. For each entity that is not "Done":
    1. Look for next ideal shift.
    1. If it's unoccupied, take it.
