@@ -6,7 +6,7 @@ Ensure that your computer has Python installed by running `python --version` on 
 
 If it does not, you can download Python here: https://www.python.org/downloads
 
-Download the calculateShifts.py file from this repository.
+Download the calculateShifts.py file from [Releases](https://github.com/willowv/shift-calculator/releases) (you may also find sampleEntities.csv useful).
 
 This program is run from the command line. It takes an input file and records the generated schedule in an output file. The following arguments are required:
 - Entities filename (e.g. foo.csv) - this is your input file, see the requirements below for what it should look like.
