@@ -73,7 +73,13 @@ numShifts = len(arrShifts)
 numEntities = len(arrEntities)
 shiftsPerEntity = ceil(numShifts / numEntities)
 daysPerShift = ceil(numDays / shiftsPerEntity)
-timeWindow = timedelta(daysPerShift + 2)
+timeWindow = timedelta(daysPerShift)
+
+# Initial entity sort - sort by day restrictions, most to least
+def sortByRestrictions(entity):
+    return len(entity.daysUnavailable)
+
+arrEntities.sort(reverse=True, key=sortByRestrictions)
 
 # Assign shifts
 entitiesRemaining = True
@@ -140,6 +146,16 @@ while entitiesRemaining and shiftsRemaining:
 
             # Assign the chosen shift!
             shiftCandidates[0].assign(entity)
+    
+    # Sort entities by compromises
+    def sortByCompromises(entity):
+        return entity.numCompromises
+
+    arrEntities.sort(reverse=True, key=sortByCompromises)
+
+# Debug output
+for entity in arrEntities:
+    print(entity.toStringDebug())
 
 # Write the schedule
 with open('output.csv', 'w') as outputFile:
