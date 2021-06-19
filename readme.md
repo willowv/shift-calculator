@@ -37,6 +37,8 @@ The program will output an output.csv file with the following columns:
 
 The schedule will attempt to minimize constraint violations but since these constraints can come into conflict the schedule will not be perfect. We recommend allowing substitutions if you use this schedule directly.
 
+Additionally, the program will print some debug output to the console. For each entity, it will share the nunmber of times their constraints were compromised, and the distribution of their shifts across the different days.
+
 ## Implementation Plan
 Below are some details about how the program works, if you are interested.
 
