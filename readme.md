@@ -6,7 +6,15 @@ Ensure that your computer has Python installed by running `python --version` on 
 
 If it does not, you can download Python here: https://www.python.org/downloads
 
-Download the calculateShifts.py file from [Releases](https://github.com/willowv/shift-calculator/releases) (you may also find sampleEntities.csv useful).
+When installing Python:
+- Windows may try to get you to install Python from the App Store, you should ignore this and install from Python.org, since otherwise you cannot customize the installation. You need to be able to customize the installation so you can:
+- **Check the box to add it to PATH!** This will allow your command line terminal to find Python when trying to run the program.
+
+To run the program:
+1. Download the `calculateShifts.py` file from [Releases](https://github.com/willowv/shift-calculator/releases) (you may also find `sampleEntities.csv` useful).
+2. Navigate to the folder containing `calculateShifts.py`
+3. Click "File" in the top left and "Open in Windows Powershell".
+4. Type in your command. (See below.)
 
 This program is run from the command line. It takes an input file and records the generated schedule in an output file. The following arguments are required:
 - Entities filename (e.g. foo.csv) - this is your input file, see the requirements below for what it should look like.
@@ -17,7 +25,7 @@ This program is run from the command line. It takes an input file and records th
 
 For example:
 ```
-python calculateShifts.py boats.csv 2021-08-01 10 fri;sat;sun 6
+python calculateShifts.py sampleEntities.csv 2021-08-01 10 "fri;sat;sun" 6
 ```
 
 ### Entities File Requirements
